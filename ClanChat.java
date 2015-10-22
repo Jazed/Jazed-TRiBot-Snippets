@@ -1,5 +1,3 @@
-package scripts.Testing;
-
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.input.Keyboard;
@@ -24,19 +22,16 @@ public class ClanChat
 
     public static String[] getPlayerList()
     {
-        if (isInClanChat())
+        List<String> players = new ArrayList<>();
+
+        if (clanList != null)
         {
-            List<String> players = new ArrayList<>();
-
-            if (clanList != null)
+            for (int i = 0; i < clanList.getChildren().length; i += 3)
             {
-                for (int i = 0; i < clanList.getChildren().length; i += 3)
-                {
-                    players.add(clanList.getChildren()[i].getText());
-                }
-
-                return players.stream().toArray(String[]::new);
+                players.add(clanList.getChildren()[i].getText());
             }
+
+            return players.stream().toArray(String[]::new);
         }
 
         return null;
