@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ClanChat
 {
-    private static RSInterface clan = Interfaces.get(589);
-    private static RSInterfaceChild clanList = Interfaces.get(589, 5);
+    private final static RSInterface clan = Interfaces.get(589);
+    private final static RSInterfaceChild clanList = Interfaces.get(589, 5);
 
     public static String[] getPlayerList()
     {
@@ -42,40 +42,16 @@ public class ClanChat
         return getPlayerComponent(player) != null;
     }
 
-    private static RSInterfaceComponent getPlayerComponent(String player)
+    public static int getPlayerWorld(String player)
     {
-        if (clanList != null)
+        RSInterfaceComponent playerComponent = getPlayerComponent(player);
+
+        if (playerComponent != null)
         {
-            for (RSInterfaceComponent c : clanList.getChildren())
-            {
-                if (c.getText().toLowerCase().equals(player.toLowerCase()))
-                {
-                    return c;
-                }
-            }
+            return Integer.parseInt(cleanString(clanList.getChildren()[playerComponent.getIndex() + 1].getText()).split(" ")[1]);
         }
 
-        return null;
-    }
-
-    private static void scrollToPlayerComponent(Rectangle playerList, RSInterfaceComponent playerComponent)
-    {
-        while (!playerList.contains(Mouse.getPos()))
-        {
-            Mouse.moveBox(playerList);
-        }
-
-        while (!playerList.contains(playerComponent.getAbsoluteBounds()))
-        {
-            Mouse.scroll(playerComponent.getAbsoluteBounds().y < playerList.y);
-            General.sleep(50, 100);
-        }
-
-        if (playerComponent.getAbsoluteBounds().y > playerList.y + playerList.getHeight() - playerComponent.getHeight())
-        {
-            Mouse.scroll(false);
-            General.sleep(50, 100);
-        }
+        return -1;
     }
 
     public static boolean kick(String player)
@@ -106,47 +82,6 @@ public class ClanChat
             Interfaces.get(378, 17).click();
 
             return true;
-        }
-
-        return false;
-    }
-
-    private static boolean playerAction(String player, String action, int retries)
-    {
-        if (isTabOpen())
-        {
-            Rectangle playerList = clan.getChild(4).getAbsoluteBounds();
-            RSInterfaceComponent playerComponent = getPlayerComponent(player);
-
-            if (playerComponent != null && playerList != null)
-            {
-                if (playerList.contains(playerComponent.getAbsoluteBounds()))
-                {
-                    playerComponent.hover();
-
-                    if (Game.getUptext() != null)
-                    {
-                        if (Game.getUptext().toLowerCase().contains(player.toLowerCase()))
-                        {
-                            Mouse.clickBox(playerComponent.getAbsoluteBounds(), 3);
-
-                            Timing.waitChooseOption(action + " " + player, General.random(1000, 2000));
-
-                            return true;
-                        }
-                    }
-
-                    if (retries >= 3)
-                        return false;
-
-                    playerAction(player, action, retries + 1);
-                }
-                else
-                {
-                    scrollToPlayerComponent(playerList, playerComponent);
-                    playerAction(player, action, retries);
-                }
-            }
         }
 
         return false;
@@ -192,7 +127,7 @@ public class ClanChat
     {
         if (isInClanChat())
         {
-            return clan.getChild(0).getText().split(">")[2].replaceAll("\u00A0", " ");
+            return cleanString(clan.getChild(0).getText().split(">")[2]);
         }
 
         return null;
@@ -202,7 +137,7 @@ public class ClanChat
     {
         if (isInClanChat())
         {
-            return clan.getChild(1).getText().split(">")[2].replaceAll("\u00A0", " ");
+            return cleanString(clan.getChild(1).getText().split(">")[2]);
         }
 
         return null;
@@ -216,5 +151,87 @@ public class ClanChat
         }
 
         return false;
+    }
+
+    private static boolean playerAction(String player, String action, int retries)
+    {
+        if (isTabOpen())
+        {
+            Rectangle playerList = clan.getChild(4).getAbsoluteBounds();
+            RSInterfaceComponent playerComponent = getPlayerComponent(player);
+
+            if (playerComponent != null && playerList != null)
+            {
+                if (playerList.contains(playerComponent.getAbsoluteBounds()))
+                {
+                    playerComponent.hover();
+
+                    if (Game.getUptext() != null)
+                    {
+                        if (cleanString(Game.getUptext()).toLowerCase().contains(player.toLowerCase()))
+                        {
+                            Mouse.clickBox(playerComponent.getAbsoluteBounds(), 3);
+
+                            Timing.waitChooseOption(action + " " + player.replaceAll(" ", "\u00A0"), General.random(1000, 2000));
+
+                            return true;
+                        }
+                    }
+
+                    if (retries >= 3)
+                        return false;
+
+                    playerAction(player, action, retries + 1);
+                }
+                else
+                {
+                    scrollToPlayerComponent(playerList, playerComponent);
+                    playerAction(player, action, retries);
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static RSInterfaceComponent getPlayerComponent(String player)
+    {
+        if (clanList != null)
+        {
+            for (RSInterfaceComponent c : clanList.getChildren())
+            {
+                if (cleanString(c.getText().toLowerCase()).equals(player.toLowerCase()))
+                {
+                    return c;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static void scrollToPlayerComponent(Rectangle playerList, RSInterfaceComponent playerComponent)
+    {
+        while (!playerList.contains(Mouse.getPos()))
+        {
+            Mouse.moveBox(playerList);
+        }
+
+        while (!playerList.contains(playerComponent.getAbsoluteBounds()))
+        {
+            Mouse.scroll(playerComponent.getAbsoluteBounds().y < playerList.y);
+            General.sleep(50, 100);
+        }
+
+        if (playerComponent.getAbsoluteBounds().y > playerList.y + playerList.getHeight() - playerComponent.getHeight())
+        {
+            Mouse.scroll(false);
+            General.sleep(50, 100);
+        }
+    }
+
+    private static String cleanString(String string)
+    {
+        return string.replaceAll("\u00A0", " ");
     }
 }
