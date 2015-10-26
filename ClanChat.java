@@ -20,6 +20,19 @@ public class ClanChat
     private final static RSInterface clan = Interfaces.get(589);
     private final static RSInterfaceChild clanList = Interfaces.get(589, 5);
 
+    public enum Rank
+    {
+        NONE,
+        FRIEND,
+        RECRUIT,
+        CORPORAL,
+        SERGEANT,
+        LIEUTENANT,
+        CAPTAIN,
+        GENERAL,
+        OWNER
+    }
+
     public static String[] getPlayerList()
     {
         List<String> players = new ArrayList<>();
@@ -52,6 +65,18 @@ public class ClanChat
         }
 
         return -1;
+    }
+
+    public static Rank getPlayerRank(String player)
+    {
+        RSInterfaceComponent playerComponent = getPlayerComponent(player);
+
+        if (playerComponent != null)
+        {
+            return getRankByTexture(clanList.getChildren()[playerComponent.getIndex() + 2].getTextureID());
+        }
+
+        return Rank.NONE;
     }
 
     public static boolean kick(String player)
@@ -228,6 +253,41 @@ public class ClanChat
             Mouse.scroll(false);
             General.sleep(50, 100);
         }
+    }
+
+    private static Rank getRankByTexture(int textureID)
+    {
+        Rank rank = Rank.NONE;
+
+        switch (textureID)
+        {
+            case 1004:
+                rank = Rank.FRIEND;
+                break;
+            case 1012:
+                rank = Rank.RECRUIT;
+                break;
+            case 1011:
+                rank = Rank.CORPORAL;
+                break;
+            case 1010:
+                rank = Rank.SERGEANT;
+                break;
+            case 1009:
+                rank = Rank.LIEUTENANT;
+                break;
+            case 1008:
+                rank = Rank.CAPTAIN;
+                break;
+            case 1007:
+                rank = Rank.GENERAL;
+                break;
+            case 1006:
+                rank = Rank.OWNER;
+                break;
+        }
+
+        return rank;
     }
 
     private static String cleanString(String string)
