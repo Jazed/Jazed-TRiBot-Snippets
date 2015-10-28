@@ -142,9 +142,9 @@ public class WorldHop
 
         String[] options = NPCChat.getOptions();
 
-        if (options.length > 1)
+        if (options != null)
         {
-            if (options[1].equals(option))
+            if (options[1] != null && options[1].equals(option))
             {
                 NPCChat.selectOption(option, true);
             }
