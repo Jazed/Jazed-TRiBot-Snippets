@@ -23,9 +23,7 @@ public class WorldHop
     public static boolean hopTo(int world)
     {
         if (world > 300)
-        {
             world = world - 300;
-        }
 
         return doHopping(world, 0);
     }
