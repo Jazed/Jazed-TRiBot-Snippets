@@ -51,7 +51,7 @@ public class WorldHop
 
                 if (Game.getUptext() != null)
                 {
-                    if (worldList.getChildren()[worldComponent.getIndex() + 2].getText().equals(String.valueOf(world)))
+                    if (Game.getUptext().split("/")[0].replace("Switch", "").replaceAll(" ", "").equals(String.valueOf(world)))
                     {
                         Mouse.click(1);
 
