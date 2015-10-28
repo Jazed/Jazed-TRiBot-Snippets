@@ -47,9 +47,11 @@ public class WorldHop
             {
                 worldComponent.hover();
 
-                if (Game.getUptext() != null)
+                String uptext = Game.getUptext();
+
+                if (uptext != null)
                 {
-                    if (Game.getUptext().split("/")[0].replace("Switch", "").replaceAll(" ", "").equals(String.valueOf(world)))
+                    if (uptext.split("/")[0].replace("Switch", "").replaceAll(" ", "").equals(String.valueOf(world)))
                     {
                         Mouse.click(1);
 
@@ -138,9 +140,11 @@ public class WorldHop
     {
         String option = "Yes. In future, only warn about dangerous worlds.";
 
-        if (NPCChat.getOptions() != null)
+        String[] options = NPCChat.getOptions();
+
+        if (options != null)
         {
-            if (NPCChat.getOptions()[1] != null && NPCChat.getOptions()[1].equals(option))
+            if (options[1] != null && options[1].equals(option))
             {
                 NPCChat.selectOption(option, true);
             }
